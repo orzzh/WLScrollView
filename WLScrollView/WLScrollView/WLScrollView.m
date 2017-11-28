@@ -255,7 +255,7 @@ WLSubViewDelegate
         //更新offset 刷新cell
         [self upConfig];
     }
-    if (contentOffsetX < _subViewWith){
+    if (contentOffsetX <= _subViewWith){
         
         //向左滑动
         _index -= 1;
