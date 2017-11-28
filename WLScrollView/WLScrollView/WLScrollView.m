@@ -102,6 +102,14 @@ WLSubViewDelegate
 
 - (void)checkOffset{
     self.scrollView.contentOffset = _point;
+    for (int i = 0 ; i<self.subViewAry.count; i++ ) {
+        UIView *sub = [self.subViewAry objectAtIndex:i];
+        if (i == 2) {
+            sub.layer.transform = CATransform3DMakeScale(self.maxAnimationScale, self.maxAnimationScale, 1.0);
+        }else{
+            sub.layer.transform = CATransform3DMakeScale(self.minAnimationScale, self.minAnimationScale, 1.0);
+        }
+    }
 }
 
 - (void)checkCellnum{
@@ -219,12 +227,13 @@ WLSubViewDelegate
         sub.layer.transform = CATransform3DMakeScale(scale, scale, 1.0);
         CGFloat scale1 = _minAnimationScale+fabs(diff)/shortX*  (_maxAnimationScale - _minAnimationScale);
         subRight.layer.transform = CATransform3DMakeScale(scale1, scale1, 1.0);
+        
     }
-
+    
     if (centerX >= sum && fabs(diff) <= shortX) {
         //向右滑动
         CGFloat scale = _maxAnimationScale-fabs(diff)/shortX * (_maxAnimationScale - _minAnimationScale);
-        sub.layer.transform = CATransform3DMakeScale(scale, scale, _minAnimationScale);
+        sub.layer.transform = CATransform3DMakeScale(scale, scale, 1.0);
         CGFloat scale1 = _minAnimationScale+fabs(diff)/shortX * (_maxAnimationScale - _minAnimationScale);
         subLift.layer.transform = CATransform3DMakeScale(scale1, scale1, 1.0);
     }
@@ -245,7 +254,8 @@ WLSubViewDelegate
 
         //更新offset 刷新cell
         [self upConfig];
-    }else if (contentOffsetX <= _subViewWith){
+    }
+    if (contentOffsetX < _subViewWith){
         
         //向左滑动
         _index -= 1;
@@ -254,8 +264,10 @@ WLSubViewDelegate
         [self upConfig];
     }
     [self animation];
-
 }
+//-(void)scrollViewWillBeginDecelerating: (UIScrollView *)scrollView{
+//    [scrollView setContentOffset:scrollView.contentOffset animated:NO];
+//}
 
 #pragma mark - WLSubViewDelegate
 - (void)didSelectedRespond{
@@ -286,6 +298,8 @@ WLSubViewDelegate
         _scrollView.contentSize = CGSizeMake(_subViewWith*5, height);
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.showsVerticalScrollIndicator = NO;
+        _scrollView.bounces = NO;
+        _scrollView.decelerationRate = 0.1;
         [self addSubview:_scrollView];
     }
     return _scrollView;

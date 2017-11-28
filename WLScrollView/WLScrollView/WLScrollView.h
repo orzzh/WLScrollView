@@ -80,17 +80,17 @@ typedef NS_ENUM(NSInteger) {
 @property (nonatomic,assign)CGFloat scale;
 
 /**
-	子view所占比例 建议 0～20
+	子view中内容据两边距离 建议 0～20
  */
 @property (nonatomic,assign)CGFloat marginX;//左边距
 
 /**
-	 子view所占比例 建议 1～1.2
+	 子view动画效果放大比例 建议 1～1.2
  */
 @property (nonatomic,assign)CGFloat maxAnimationScale;//最大缩放比例
 
 /**
-	 子view所占比例 建议 0.6～1
+	 子view动画效果缩小比例 建议 0.6～1
  */
 @property (nonatomic,assign)CGFloat minAnimationScale;//最小缩放比例
 
@@ -99,9 +99,6 @@ typedef NS_ENUM(NSInteger) {
  */
 - (void)starRender;
 
-/**
- 
- */
 
 /**
     复用
