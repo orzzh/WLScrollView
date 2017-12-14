@@ -75,6 +75,11 @@ typedef NS_ENUM(NSInteger) {
 @property (nonatomic,assign)BOOL isAnimation;
 
 /**
+  边缘是否限制滚动 默认NO
+ */
+@property (nonatomic,assign)BOOL isEnableMargin;
+
+/**
 	 子view所占比例 建议 0.6～1.0
  */
 @property (nonatomic,assign)CGFloat scale;
@@ -108,6 +113,12 @@ typedef NS_ENUM(NSInteger) {
 - (WLSubView *)dequeueReuseCellWithIdentifier:(NSString *)identifier;
 
 
+/**
+  设置起始位置
+
+ @param index 数据源起始位置index
+ */
+- (void)setIndex:(NSInteger)index;
 
 
 

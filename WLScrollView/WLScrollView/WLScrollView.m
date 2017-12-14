@@ -39,11 +39,35 @@ WLSubViewDelegate
     return self;
 }
 
+#pragma  mark - 设置起始位置
+
+- (void)setIndex:(NSInteger)index{
+    _index = index;
+}
+
+
+#pragma  mark - 复用池查找
+
+- (WLSubView *)dequeueReuseCellWithIdentifier:(NSString *)identifier{
+    for (WLSubView *sub in self.reuseViewAry) {
+        if ([sub.identifier isEqualToString:identifier] && !sub.isUser) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.reuseViewAry removeObject:sub];
+            });
+            return sub;
+        }
+    }
+    return nil;
+}
+
+
+
 - (void)createUI{
     _index = 0;
     _scale = 0.7;
     _marginX = 10;
     _isAnimation = YES;
+    _isEnableMargin = NO;
     _maxAnimationScale = 1.2;
     _minAnimationScale = 0.9;
     
@@ -102,6 +126,9 @@ WLSubViewDelegate
 
 - (void)checkOffset{
     self.scrollView.contentOffset = _point;
+    
+    if (_isAnimation == NO) {return;}
+    
     for (int i = 0 ; i<self.subViewAry.count; i++ ) {
         UIView *sub = [self.subViewAry objectAtIndex:i];
         if (i == 2) {
@@ -126,6 +153,8 @@ WLSubViewDelegate
     //获取数据源index数组
     NSArray *indexAry = [self checkIndexAry];
     
+    //边缘隐藏
+    [self checkHiden];
     
     for (int i = 0; i<5; i++) {
         
@@ -152,7 +181,47 @@ WLSubViewDelegate
     }
 }
 
+#pragma mark - 边缘隐藏
 
+- (void)checkHiden{
+    if (!_isEnableMargin) {return;}
+    if (_index == 0) {
+        UIView *subView = [self.subViewAry objectAtIndex:0];
+        UIView *subView1 = [self.subViewAry objectAtIndex:1];
+        subView.hidden = YES;
+        subView1.hidden = YES;
+    }else
+    if (_index == 1) {
+        UIView *subView = [self.subViewAry objectAtIndex:0];
+        subView.hidden = YES;
+        UIView *subView1 = [self.subViewAry objectAtIndex:1];
+        subView1.hidden = NO;
+    }else
+    if (_index == 2) {
+        UIView *subView = [self.subViewAry objectAtIndex:0];
+        subView.hidden = NO;
+        UIView *subView1 = [self.subViewAry objectAtIndex:1];
+        subView1.hidden = NO;
+    }
+    if (_index == _cellNum-1) {
+        UIView *subView = [self.subViewAry objectAtIndex:3];
+        UIView *subView1 = [self.subViewAry objectAtIndex:4];
+        subView.hidden = YES;
+        subView1.hidden = YES;
+    }else
+    if (_index == _cellNum-2) {
+        UIView *subView = [self.subViewAry objectAtIndex:4];
+        subView.hidden = YES;
+        UIView *subView1 = [self.subViewAry objectAtIndex:3];
+        subView1.hidden = NO;
+    }else
+    if (_index == _cellNum-3) {
+        UIView *subView = [self.subViewAry objectAtIndex:3];
+        subView.hidden = NO;
+        UIView *subView1 = [self.subViewAry objectAtIndex:4];
+        subView1.hidden = NO;
+    }
+}
 
 #pragma  mark - 计算当前cell数据源index 存入数组
 
@@ -191,19 +260,6 @@ WLSubViewDelegate
     return ary;
 }
 
-#pragma  mark - 复用池查找
-
-- (WLSubView *)dequeueReuseCellWithIdentifier:(NSString *)identifier{
-    for (WLSubView *sub in self.reuseViewAry) {
-        if ([sub.identifier isEqualToString:identifier] && !sub.isUser) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.reuseViewAry removeObject:sub];
-            });
-            return sub;
-        }
-    }
-    return nil;
-}
 
 #pragma mark - 动画函数
 
@@ -246,9 +302,19 @@ WLSubViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
 
     CGFloat contentOffsetX = scrollView.contentOffset.x;
-
+    
+    if (_index == 0 && contentOffsetX < _point.x && _isEnableMargin) {
+        scrollView.contentOffset = _point;
+        return;
+    }
+    if (_index == _cellNum-1 && contentOffsetX > _point.x && _isEnableMargin) {
+        scrollView.contentOffset = _point;
+        return;
+    }
+    
     //判断左滑右滑
     if (contentOffsetX >= _subViewWith*3) {
+        
         //offset向右滑动 +1
         _index += 1;
 
@@ -265,9 +331,7 @@ WLSubViewDelegate
     }
     [self animation];
 }
-//-(void)scrollViewWillBeginDecelerating: (UIScrollView *)scrollView{
-//    [scrollView setContentOffset:scrollView.contentOffset animated:NO];
-//}
+
 
 #pragma mark - WLSubViewDelegate
 - (void)didSelectedRespond{

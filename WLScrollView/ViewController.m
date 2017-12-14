@@ -83,9 +83,6 @@
     static NSString *cellID = @"123";
     static NSString *cellID2 = @"3453";
     static NSString *cellID3 = @"cell";
-
-
-    NSArray *color = @[[UIColor redColor],[UIColor grayColor],[UIColor yellowColor],[UIColor blackColor],[UIColor greenColor],[UIColor greenColor]];
     
     if (index == 4 || index == 1) {
         textView *sub = (textView *)[scrollView dequeueReuseCellWithIdentifier:cellID2];
@@ -93,7 +90,6 @@
             sub = [[textView alloc] initWithFrame:frame Identifier:cellID2];
         }
         sub.im.image = [UIImage imageNamed:@"3"];
-        sub.backgroundColor = [color objectAtIndex:index];
         return sub;
     }else if (index == 2){
         
@@ -111,7 +107,6 @@
             sub = [[LableView alloc] initWithFrame:frame Identifier:cellID];
         }
         sub.im.image = [UIImage imageNamed:@"1"];
-        sub.backgroundColor = [color objectAtIndex:index];
         return sub;
     }else{
         LableView *sub = (LableView *)[scrollView dequeueReuseCellWithIdentifier:cellID];
@@ -119,7 +114,6 @@
             sub = [[LableView alloc] initWithFrame:frame Identifier:cellID];
         }
         sub.im.image = [UIImage imageNamed:@"2"];
-        sub.backgroundColor = [color objectAtIndex:index];
         return sub;
     }
 }
@@ -178,11 +172,17 @@
     wlScrView = [[WLScrollView alloc]initWithFrame:CGRectMake(0, 150, WLScreen_width, 400)];
     wlScrView.delegate = self;
     wlScrView.isAnimation = YES;
+    
+     //是否轮播。轮播设置为NO 或者不设置
+    wlScrView.isEnableMargin = YES;
     wlScrView.scale = 0.7;
     wlScrView.marginX = 0;
     wlScrView.maxAnimationScale = 1;
     wlScrView.minAnimationScale = 0.8;
     wlScrView.backgroundColor = [UIColor clearColor];
+    
+     //设置起始位置 默认 0
+//    [wlScrView setIndex:2];
     [wlScrView starRender];
     [self.view addSubview:wlScrView];
 }
